@@ -17,21 +17,6 @@ func main() {
 			logger.LogE(err)
 		}
 	}(grpcConn)
-	/*
-		Comment out here when Polar is used
-		conn := lnrpc.NewWalletUnlockerClient(grpcConn)
-		unlockReq := lnrpc.UnlockWalletRequest{
-			WalletPassword: []byte("dogukan1"),
-			RecoveryWindow: 10000,
-			ChannelBackups: nil,
-		}
-		_, err := conn.UnlockWallet(context.Background(), &unlockReq)
-		if err != nil {
-			if strings.Contains(err.Error(), "unknown service lnrpc.WalletUnlocker") || strings.Contains(err.Error(), "wallet already unlocked") {
-				return
-			}
-			logger.LogE(err.Error())
-		}*/
 	lnci := lnrpc.NewLightningClient(grpcConn)
 	subscribeMessageRequest := lnrpc.SubscribeCustomMessagesRequest{}
 	client, err := lnci.SubscribeCustomMessages(context.Background(), &subscribeMessageRequest)
