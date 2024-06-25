@@ -1,15 +1,16 @@
-package main
+package reciever
 
 import (
 	"MasterThesis/helper"
 	"MasterThesis/logger"
+	"MasterThesis/recorder"
 	"context"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"google.golang.org/grpc"
 	"os"
 )
 
-func main() {
+func SubscribeMessages() {
 	grpcConn := helper.GrpcSetup(os.Getenv("POLAR_CLIENT_PORT"), os.Getenv("POLAR_CLIENT_TLS"), os.Getenv("POLAR_CLIENT_MACAROON"))
 	defer func(grpcConn *grpc.ClientConn) {
 		err := grpcConn.Close()
@@ -29,6 +30,12 @@ func main() {
 			logger.LogE(err)
 		} else {
 			logger.LogI(string(message.Data))
+			db := recorder.Connect()
+			recorder.Save(db, "Messages", map[string]interface{}{
+				"Message": message.Data,
+				"Type":    "RECEIVE",
+				"Peer":    string(message.Peer),
+			})
 		}
 
 	}

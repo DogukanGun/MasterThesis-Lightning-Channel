@@ -2,15 +2,14 @@ package sender
 
 import (
 	"MasterThesis/logger"
+	"MasterThesis/recorder"
 	"context"
 	"encoding/hex"
 	"fmt"
 	"github.com/lightningnetwork/lnd/lnrpc"
-	"google.golang.org/grpc"
 )
 
-func SendMessage(message string, channelID string, grpcConn *grpc.ClientConn) {
-	lncli := lnrpc.NewLightningClient(grpcConn)
+func SendMessage(message string, channelID string, lncli lnrpc.LightningClient) {
 	getInfoRequest := lnrpc.GetInfoRequest{}
 	info, err := lncli.GetInfo(context.TODO(), &getInfoRequest)
 	if err != nil {
@@ -43,4 +42,10 @@ func SendMessage(message string, channelID string, grpcConn *grpc.ClientConn) {
 	}
 	logger.LogS(resMulti.String())
 	logger.LogI("Message has been sent")
+	db := recorder.Connect()
+	recorder.Save(db, "Messages", map[string]interface{}{
+		"Message": message,
+		"Type":    "SEND",
+		"Peer":    peerPublicKeyBytes,
+	})
 }
