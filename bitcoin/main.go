@@ -1,33 +1,21 @@
 package bitcoin
 
 import (
-	"bytes"
-	"github.com/btcsuite/btcd/btcutil"
-	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"log"
-	"os"
 )
 
-func ModifyAndBroadcastClosingTx(recipientAddress string, rawTxHex string, client *rpcclient.Client, metadata string) error {
-	rawTx := []byte(rawTxHex)
-
+func PublishMetadata(prevTxHashStr string, metadata string, client *rpcclient.Client) error {
+	// Create a new empty transaction
 	msgTx := wire.NewMsgTx(wire.TxVersion)
-	if err := msgTx.Deserialize(bytes.NewReader(rawTx)); err != nil {
-		return err
-	}
 
-	// Decode recipient address
-	recipientAddr, err := btcutil.DecodeAddress(recipientAddress, &chaincfg.RegressionNetParams)
-	if err != nil {
-		return err
-	}
-	pkScript, err := txscript.PayToAddrScript(recipientAddr)
-	if err != nil {
-		return err
-	}
+	prevTxHash, _ := chainhash.NewHashFromStr(prevTxHashStr)
+	prevOutPoint := wire.NewOutPoint(prevTxHash, 0) // 0 is the index of the output in the previous transaction
+	txIn := wire.NewTxIn(prevOutPoint, nil, nil)
+	msgTx.AddTxIn(txIn)
 
 	// Add OP_RETURN output with metadata
 	opReturnScript, err := txscript.NullDataScript([]byte(metadata))
@@ -37,21 +25,7 @@ func ModifyAndBroadcastClosingTx(recipientAddress string, rawTxHex string, clien
 	txOut := wire.NewTxOut(0, opReturnScript)
 	msgTx.AddTxOut(txOut)
 
-	// Decode private key
-	privKey, err := btcutil.DecodeWIF(os.Getenv("privKeyWIF"))
-	if err != nil {
-		log.Fatalf("Error decoding private key: %v", err)
-	}
-
-	// Sign the transaction
-	for i, txIn := range msgTx.TxIn {
-		sigScript, err := txscript.SignatureScript(msgTx, i, pkScript, txscript.SigHashAll, privKey.PrivKey, true)
-		if err != nil {
-			return err
-		}
-		txIn.SignatureScript = sigScript
-	}
-
+	// Send the transaction
 	txHash, err := client.SendRawTransaction(msgTx, true)
 	if err != nil {
 		return err
