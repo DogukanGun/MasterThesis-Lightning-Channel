@@ -76,7 +76,7 @@ func CloseChannel(Txid string, lncli lnrpc.LightningClient) {
 		logger.LogE("Failed to create Bitcoin RPC client: ", err)
 	}
 	defer rpcClient.Shutdown()
-	if err := bitcoin.PublishMetadata(closingTxHex, metadata, rpcClient); err != nil {
+	if err := bitcoin.PublishMetadata(os.Getenv("PrevTransaction"), 0, metadata, rpcClient); err != nil {
 		logger.LogE("Error modifying and broadcasting transaction: ", err)
 	}
 
