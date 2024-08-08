@@ -1,4 +1,6 @@
 # MasterThesis-Lightning-Channel
+[PaymentChannel-BasedProcessMonitoring.pdf](https://github.com/user-attachments/files/16553184/PaymentChannel-BasedProcessMonitoring.pdf)
+
 ## Overview
 This repository contains the codebase for a Command-Line Interface (CLI) tool designed to facilitate secure peer-to-peer messaging on the blockchain using the Lightning Network. This project is part of a master's thesis that explores integrating the Lightning Network into Business Process Management (BPM) systems to enhance transaction efficiency, reduce costs, and maintain security.
 ## Introduction
@@ -52,4 +54,5 @@ lnmsg close --peer <PEER_ADDRESS>
 ```
 **peer** The address of the peer with whom you want to close the channel.
 This closes the specified payment channel and settles the final balances on the Bitcoin blockchain. The command ensures that all transactions are recorded and verified.
+
 
