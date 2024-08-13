@@ -19,6 +19,8 @@ func SubscribeMessages() {
 		}
 	}(grpcConn)
 	lnci := lnrpc.NewLightningClient(grpcConn)
+	getInfoRequest := lnrpc.GetInfoRequest{}
+	info, err := lnci.GetInfo(context.TODO(), &getInfoRequest)
 	subscribeMessageRequest := lnrpc.SubscribeCustomMessagesRequest{}
 	client, err := lnci.SubscribeCustomMessages(context.Background(), &subscribeMessageRequest)
 	if err != nil {
@@ -34,7 +36,7 @@ func SubscribeMessages() {
 			recorder.Save(db, "Messages", map[string]interface{}{
 				"Message": message.Data,
 				"Type":    "RECEIVE",
-				"Peer":    string(message.Peer),
+				"Peer":    info.Alias,
 			})
 		}
 

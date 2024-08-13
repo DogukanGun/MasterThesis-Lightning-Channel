@@ -56,3 +56,7 @@ lnmsg close --peer <PEER_ADDRESS>
 This closes the specified payment channel and settles the final balances on the Bitcoin blockchain. The command ensures that all transactions are recorded and verified.
 
 
+## Examples
+
+- CID = bafkreigqgb2cvjwiwgljozlarhrk3emtt3benfrhbqfyxzatwtakcndy2m
+- Video

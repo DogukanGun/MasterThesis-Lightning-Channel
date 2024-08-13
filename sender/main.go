@@ -46,6 +46,6 @@ func SendMessage(message string, channelID string, lncli lnrpc.LightningClient) 
 	recorder.Save(db, "Messages", map[string]interface{}{
 		"Message": message,
 		"Type":    "SEND",
-		"Peer":    peerPublicKeyBytes,
+		"Peer":    info.Alias,
 	})
 }
