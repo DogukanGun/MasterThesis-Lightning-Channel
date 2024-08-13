@@ -59,4 +59,5 @@ This closes the specified payment channel and settles the final balances on the 
 ## Examples
 
 - CID = bafkreigqgb2cvjwiwgljozlarhrk3emtt3benfrhbqfyxzatwtakcndy2m
-- Video
+- Video: https://drive.google.com/drive/folders/1EhzlYuboNNfoAtmCP44tQuw1sQQkj0kl?usp=sharing
+  
